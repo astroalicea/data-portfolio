@@ -3,32 +3,24 @@
 #Author: Luis
 #Date: 2026-04-16
 
-coin = "Bitcoin"
-price = 75670.00
-change = 2.34
 
-print(f"{coin}: ${price:,.2f} | 24h change: {change}%")
+coins = {
+    "Bitcoin":      {"price": 77329.32, "change": 2.81},
+    "Ethereum":     {"price": 2471.39, "change": 3.01},
+    "Solana":       {"price": 89.40, "change": -0.1},
+    "Chainlink":    {"price": 9.68, "change": 0.70},
+    "Hyperliquid":  {"price": 44.22, "change": .80}
+}
 
-coin2 = "Ethereum"
-price2 = 2374.52
-change2 = 1.50
+for coin, data in coins.items():
+    print(f"{coin}: ${data['price']:,.2f} | 24h change: {data['change']:.2f}%")
 
-print(f"{coin2}: ${price2:,.2f} | 24h change: {change2:.2f}%")
+total_coins = len(coins)
+highest = max(coins, key=lambda coin: coins[coin]["change"])
+lowest = min(coins, key=lambda coin: coins[coin]["change"])
 
-coin3 = "Solana"
-price3 = 88.79
-change3 = 4.00
-
-print(f"{coin3}: ${price3:,.2f} | 24h change: {change3:.2f}%")
-
-coin4 = "Chainlink"
-price4 = 9.62
-change4 = 3.10
-
-print(f"{coin4}: ${price4:,.2f} | 24h change: {change4:.2f}%")
-
-coin5 = "Hyperliquid"
-price5 = 44.13
-change5 = -2.10
-
-print(f"{coin5}: ${price5:,.2f} | 24h change: {change5:.2f}%")
+print("-" * 45)
+print(f"Coins tracked: {total_coins}")
+print(f"Top performer: {highest} ({coins[highest]['change']:.2f}%)")
+print(f"Worst performer: {lowest} ({coins[lowest]['change']:.2f}%)")
+print("-" * 45)
