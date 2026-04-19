@@ -14,21 +14,18 @@ watchlist = {
 def get_top_mover(watchlist):
     """Returns the coin name with highest 24h change."""
     return max(watchlist, key=lambda coin: watchlist[coin]["change"])
-top = get_top_mover(watchlist)
-print(f"Top Mover: {top} ({watchlist[top]['change']:.2f}%)")
+
 
 def get_worst_mover(watchlist):
     """Returns the coin name with lowest 24h change."""
     return min(watchlist, key=lambda coin: watchlist[coin]["change"])
-worst = get_worst_mover(watchlist)
-print(f"Worst Mover: {worst} ({watchlist[worst]['change']:.2f}%)")
+
 
 def get_total_volume(watchlist):
     """Returns the total combined volume of all coins."""
     return sum(watchlist[coin]["volume"] for coin in watchlist)
 
-total = get_total_volume(watchlist)
-print(f"Total volume: ${total:,.0f}")
+
 
 def get_summary(watchlist):
     """Prints a fell watchlist summary report."""
@@ -36,4 +33,23 @@ def get_summary(watchlist):
     worst = get_worst_mover(watchlist)
     total = get_total_volume(watchlist)
 
-print("-" * 40)
+    print("-" * 40)
+    print("WATCHLIST SUMMARY")
+    print("-" * 40)
+
+    for name, data in watchlist.items():
+        print(f"{name}: ${data['price']:,.2f} | 24h change: {data['change']:.2f}% | Volume: {data['volume']:,.0f}")
+
+
+    print("-" * 40)
+    print(f"Top Mover:    {top} ({watchlist[top]['change']:.2f}%)")
+    print(f"Worst Mover:  {worst} ({watchlist[worst]['change']:.2f}%)")
+    print(f"Total Volume: ${total:,.0f}")
+    print("-" * 40)
+
+get_summary(watchlist)
+
+
+   
+
+
