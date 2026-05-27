@@ -1,13 +1,13 @@
 'use client';
 
-import { getCheckIns } from '@/lib/storage';
-import { useStoredValue } from '@/lib/use-stored';
+import { STORAGE_KEYS } from '@/lib/storage';
+import { useStoredJSON } from '@/lib/use-stored';
 import { computeStreak } from '@/lib/date';
 
-const EMPTY = [];
+const EMPTY_LIST = [];
 
 export default function StreakDisplay() {
-  const checkIns = useStoredValue(getCheckIns, EMPTY);
+  const checkIns = useStoredJSON(STORAGE_KEYS.checkIns, EMPTY_LIST);
   const streak = computeStreak(checkIns);
 
   return (

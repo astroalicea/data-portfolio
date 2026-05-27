@@ -1,23 +1,34 @@
 'use client';
 
-import { useSyncExternalStore } from 'react';
+import { useCallback, useMemo, useSyncExternalStore } from 'react';
+import { readRaw } from './storage';
 
-// localStorage is treated as an external mutable source. We only write through
-// our own helpers, so we don't need to subscribe to cross-tab changes for the
-// MVP — a no-op subscribe is fine.
+// We don't subscribe to cross-tab `storage` events for the MVP — all writes
+// go through our own helpers in this tab, so a fresh mount after a navigation
+// re-reads the latest value.
 function noopSubscribe() {
   return () => {};
 }
 
 /**
- * Read a value from an external source (typically localStorage) in an
- * SSR-safe way. The server-rendered HTML uses `serverFallback`; the client
- * rehydrates with the real value after mount.
+ * Read a JSON value from localStorage in an SSR-safe way.
+ *
+ * `useSyncExternalStore` receives the raw string from localStorage (a
+ * primitive, always stable under Object.is), and the parsed value is
+ * memoized so we only re-allocate when the underlying string actually
+ * changes. `fallback` is used both on the server and when storage is empty
+ * or unparseable.
  */
-export function useStoredValue(getSnapshot, serverFallback) {
-  return useSyncExternalStore(
-    noopSubscribe,
-    getSnapshot,
-    () => serverFallback,
-  );
+export function useStoredJSON(key, fallback) {
+  const getSnapshot = useCallback(() => readRaw(key), [key]);
+  const raw = useSyncExternalStore(noopSubscribe, getSnapshot, () => null);
+
+  return useMemo(() => {
+    if (raw == null) return fallback;
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return fallback;
+    }
+  }, [raw, fallback]);
 }

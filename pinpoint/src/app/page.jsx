@@ -6,22 +6,17 @@ import { useEffect, useMemo } from 'react';
 import FocusCard from '@/components/FocusCard';
 import StreakDisplay from '@/components/StreakDisplay';
 import { getFocusForUser } from '@/lib/focus';
-import {
-  getCheckIns,
-  getFocusHistory,
-  getProfile,
-  recordFocusDelivered,
-} from '@/lib/storage';
+import { STORAGE_KEYS, recordFocusDelivered } from '@/lib/storage';
 import { todayKey } from '@/lib/date';
-import { useStoredValue } from '@/lib/use-stored';
+import { useStoredJSON } from '@/lib/use-stored';
 
-const EMPTY = [];
+const EMPTY_LIST = [];
 
 export default function HomePage() {
   const router = useRouter();
-  const profile = useStoredValue(getProfile, null);
-  const checkIns = useStoredValue(getCheckIns, EMPTY);
-  const history = useStoredValue(getFocusHistory, EMPTY);
+  const profile = useStoredJSON(STORAGE_KEYS.profile, null);
+  const checkIns = useStoredJSON(STORAGE_KEYS.checkIns, EMPTY_LIST);
+  const history = useStoredJSON(STORAGE_KEYS.focusHistory, EMPTY_LIST);
 
   const focus = useMemo(() => {
     if (!profile) return null;
@@ -38,7 +33,6 @@ export default function HomePage() {
     return getFocusForUser(profile, checkIns, seed);
   }, [profile, checkIns, history]);
 
-  // Side effects: redirect if no profile, and persist today's focus once.
   useEffect(() => {
     if (profile === null) {
       router.replace('/onboarding');
