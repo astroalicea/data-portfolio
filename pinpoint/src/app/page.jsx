@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 import FocusCard from '@/components/FocusCard';
+import SharpenFocusCard from '@/components/SharpenFocusCard';
 import StreakDisplay from '@/components/StreakDisplay';
 import { getFocusForUser } from '@/lib/focus';
 import { STORAGE_KEYS, recordFocusDelivered } from '@/lib/storage';
@@ -63,6 +64,8 @@ export default function HomePage() {
 
       <FocusCard focus={focus} />
 
+      {shouldShowSharpenCard(profile, checkIns) && <SharpenFocusCard />}
+
       <StreakDisplay />
 
       <div className="mt-auto flex flex-col gap-3 pt-6">
@@ -97,6 +100,19 @@ function beltLabel(belt) {
 function sameLocalDay(iso, key) {
   const d = new Date(iso);
   return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}` === key;
+}
+
+function shouldShowSharpenCard(profile, checkIns) {
+  if (!profile) return false;
+  if (checkIns.length < 3) return false;
+  if (profile.extended_at) return false;
+  if (
+    profile.extended_dismissed_until &&
+    new Date(profile.extended_dismissed_until) > new Date()
+  ) {
+    return false;
+  }
+  return true;
 }
 
 function hashKey(str) {

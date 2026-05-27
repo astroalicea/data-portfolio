@@ -54,6 +54,19 @@ export function saveProfile(profile) {
   return profile;
 }
 
+export function updateProfile(patch) {
+  const current = getProfile();
+  if (!current) return null;
+  const next = { ...current, ...patch };
+  writeJSON(STORAGE_KEYS.profile, next);
+  return next;
+}
+
+export function snoozeExtendedProfile(days = 7) {
+  const until = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString();
+  return updateProfile({ extended_dismissed_until: until });
+}
+
 export function getCheckIns() {
   return readJSON(STORAGE_KEYS.checkIns, []);
 }
