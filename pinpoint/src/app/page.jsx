@@ -1,0 +1,114 @@
+'use client';
+
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect, useMemo } from 'react';
+import FocusCard from '@/components/FocusCard';
+import StreakDisplay from '@/components/StreakDisplay';
+import { getFocusForUser } from '@/lib/focus';
+import {
+  getCheckIns,
+  getFocusHistory,
+  getProfile,
+  recordFocusDelivered,
+} from '@/lib/storage';
+import { todayKey } from '@/lib/date';
+import { useStoredValue } from '@/lib/use-stored';
+
+const EMPTY = [];
+
+export default function HomePage() {
+  const router = useRouter();
+  const profile = useStoredValue(getProfile, null);
+  const checkIns = useStoredValue(getCheckIns, EMPTY);
+  const history = useStoredValue(getFocusHistory, EMPTY);
+
+  const focus = useMemo(() => {
+    if (!profile) return null;
+    const today = todayKey();
+    const todays = history.find((h) => sameLocalDay(h.delivered_at, today));
+    if (todays) {
+      return {
+        focus_text: todays.focus_text,
+        area: todays.focus_area,
+        belt_level: todays.belt_level,
+      };
+    }
+    const seed = hashKey(today + profile.belt_level);
+    return getFocusForUser(profile, checkIns, seed);
+  }, [profile, checkIns, history]);
+
+  // Side effects: redirect if no profile, and persist today's focus once.
+  useEffect(() => {
+    if (profile === null) {
+      router.replace('/onboarding');
+    }
+  }, [profile, router]);
+
+  useEffect(() => {
+    if (!profile || !focus) return;
+    const today = todayKey();
+    const alreadyLogged = history.some((h) => sameLocalDay(h.delivered_at, today));
+    if (!alreadyLogged) {
+      recordFocusDelivered(focus);
+    }
+  }, [profile, focus, history]);
+
+  if (!profile) return <Skeleton />;
+
+  return (
+    <main className="flex flex-1 flex-col gap-6">
+      <header className="flex items-baseline justify-between">
+        <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+          PinPoint
+        </h1>
+        <span className="text-xs uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+          {beltLabel(profile.belt_level)} belt
+        </span>
+      </header>
+
+      <FocusCard focus={focus} />
+
+      <StreakDisplay />
+
+      <div className="mt-auto flex flex-col gap-3 pt-6">
+        <Link
+          href="/checkin"
+          className="block w-full rounded-xl bg-zinc-900 px-5 py-4 text-center text-base font-semibold text-white transition active:scale-[0.98] hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
+        >
+          I just finished training
+        </Link>
+        <p className="text-center text-xs text-zinc-500 dark:text-zinc-400">
+          Phone away. Train. Come back when you&apos;re done.
+        </p>
+      </div>
+    </main>
+  );
+}
+
+function Skeleton() {
+  return (
+    <div className="flex flex-1 flex-col gap-6">
+      <div className="h-8 w-32 animate-pulse rounded bg-zinc-200 dark:bg-zinc-800" />
+      <div className="h-48 animate-pulse rounded-2xl bg-zinc-200 dark:bg-zinc-800" />
+      <div className="h-20 animate-pulse rounded-xl bg-zinc-200 dark:bg-zinc-800" />
+    </div>
+  );
+}
+
+function beltLabel(belt) {
+  return belt.charAt(0).toUpperCase() + belt.slice(1);
+}
+
+function sameLocalDay(iso, key) {
+  const d = new Date(iso);
+  return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}` === key;
+}
+
+function hashKey(str) {
+  let h = 0;
+  for (let i = 0; i < str.length; i += 1) {
+    h = (h * 31 + str.charCodeAt(i)) | 0;
+  }
+  return Math.abs(h);
+}
