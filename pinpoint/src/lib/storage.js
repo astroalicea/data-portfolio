@@ -1,5 +1,7 @@
 // Tiny localStorage wrapper. Used by the MVP before Supabase is wired up.
-// All reads are SSR-safe (return defaults on the server).
+// All reads are SSR-safe (return defaults on the server) and stable across
+// re-renders (cached by raw string) so they're safe to pass to
+// `useSyncExternalStore`.
 
 const KEYS = {
   profile: 'pinpoint:profile',
@@ -7,52 +9,75 @@ const KEYS = {
   focusHistory: 'pinpoint:focus_history',
 };
 
+// Stable empty references — `useSyncExternalStore` compares snapshots by
+// identity, so returning a fresh `[]` each call would loop forever.
+const EMPTY_ARRAY = Object.freeze([]);
+
+// Cache parsed JSON keyed by raw string. As long as the underlying string
+// hasn't changed, callers get the same object reference back.
+const parseCache = new Map();
+
 function isBrowser() {
   return typeof window !== 'undefined';
 }
 
-function read(key, fallback) {
-  if (!isBrowser()) return fallback;
+function readJSON(key, emptyValue) {
+  if (!isBrowser()) return emptyValue;
+  let raw;
   try {
-    const raw = window.localStorage.getItem(key);
-    if (raw == null) return fallback;
-    return JSON.parse(raw);
+    raw = window.localStorage.getItem(key);
   } catch {
-    return fallback;
+    return emptyValue;
+  }
+  if (raw == null) return emptyValue;
+  const cached = parseCache.get(key);
+  if (cached && cached.raw === raw) return cached.parsed;
+  try {
+    const parsed = JSON.parse(raw);
+    parseCache.set(key, { raw, parsed });
+    return parsed;
+  } catch {
+    return emptyValue;
   }
 }
 
-function write(key, value) {
+function writeJSON(key, value) {
   if (!isBrowser()) return;
   try {
-    window.localStorage.setItem(key, JSON.stringify(value));
+    const raw = JSON.stringify(value);
+    window.localStorage.setItem(key, raw);
+    parseCache.set(key, { raw, parsed: value });
   } catch {
     // Quota or private-mode failure — fail silent for the MVP.
   }
 }
 
 export function getProfile() {
-  return read(KEYS.profile, null);
+  return readJSON(KEYS.profile, null);
 }
 
 export function saveProfile(profile) {
-  write(KEYS.profile, profile);
+  writeJSON(KEYS.profile, profile);
   return profile;
 }
 
 export function getCheckIns() {
-  return read(KEYS.checkIns, []);
+  return readJSON(KEYS.checkIns, EMPTY_ARRAY);
 }
 
 export function addCheckIn(checkIn) {
   const all = getCheckIns();
-  const next = [{ ...checkIn, id: crypto.randomUUID(), created_at: new Date().toISOString() }, ...all];
-  write(KEYS.checkIns, next);
-  return next[0];
+  const entry = {
+    ...checkIn,
+    id: crypto.randomUUID(),
+    created_at: new Date().toISOString(),
+  };
+  writeJSON(KEYS.checkIns, [entry, ...all]);
+  return entry;
 }
 
 export function getFocusHistory() {
-  return read(KEYS.focusHistory, []);
+  return readJSON(KEYS.focusHistory, EMPTY_ARRAY);
 }
 
 export function recordFocusDelivered(focus) {
@@ -64,11 +89,14 @@ export function recordFocusDelivered(focus) {
     belt_level: focus.belt_level,
     delivered_at: new Date().toISOString(),
   };
-  write(KEYS.focusHistory, [entry, ...history]);
+  writeJSON(KEYS.focusHistory, [entry, ...history]);
   return entry;
 }
 
 export function resetAll() {
   if (!isBrowser()) return;
-  Object.values(KEYS).forEach((k) => window.localStorage.removeItem(k));
+  Object.values(KEYS).forEach((k) => {
+    window.localStorage.removeItem(k);
+    parseCache.delete(k);
+  });
 }
