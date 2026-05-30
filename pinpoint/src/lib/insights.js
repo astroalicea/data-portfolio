@@ -37,3 +37,59 @@ export function attemptRate(checkIns) {
   );
   return attempts.length / checkIns.length;
 }
+
+// One short observation about the user's last 7 days. Priority cascade:
+// praise consistent attempt → nudge low attempt → surface a tap pattern →
+// celebrate sessions logged. Returns null when no check-ins this week.
+//
+// `positionLabels` is injected so this module stays free of UI imports;
+// callers pass POSITION_LABELS from focus-library.
+export function weeklyInsight(checkIns, positionLabels = {}) {
+  const window = recentCheckIns(checkIns, 7);
+  const n = window.length;
+  if (n === 0) return null;
+
+  const attempts = window.filter(
+    (c) => c.attempted_focus === 'yes' || c.attempted_focus === 'tried',
+  ).length;
+  const rate = attempts / n;
+
+  const tapCounts = window
+    .filter((c) => c.got_tapped && c.position_lost)
+    .reduce((acc, c) => {
+      acc[c.position_lost] = (acc[c.position_lost] || 0) + 1;
+      return acc;
+    }, {});
+  const topTap = Object.entries(tapCounts).sort((a, b) => b[1] - a[1])[0];
+
+  if (rate >= 0.75 && n >= 3) {
+    return {
+      tone: 'praise',
+      text: `You attempted the focus ${attempts} of ${n} sessions this week. That's the habit.`,
+    };
+  }
+  if (rate < 0.5 && n >= 2) {
+    return {
+      tone: 'nudge',
+      text: `You attempted the focus ${attempts} of ${n} sessions. Try to keep it in mind tonight.`,
+    };
+  }
+  if (topTap && topTap[1] >= 2) {
+    const [pos, count] = topTap;
+    const label = positionLabels[pos] || pos;
+    return {
+      tone: 'pattern',
+      text: `You got tapped from ${label} ${count} times this week. That's where to focus.`,
+    };
+  }
+  if (n >= 3) {
+    return {
+      tone: 'streak',
+      text: `${n} sessions logged this week. Consistency is the engine.`,
+    };
+  }
+  return {
+    tone: 'streak',
+    text: `${n} ${n === 1 ? 'session' : 'sessions'} this week. Show up again.`,
+  };
+}

@@ -7,6 +7,7 @@ import FocusCard from '@/components/FocusCard';
 import ProgressInsights from '@/components/ProgressInsights';
 import SharpenFocusCard from '@/components/SharpenFocusCard';
 import StreakDisplay from '@/components/StreakDisplay';
+import WeeklyInsight from '@/components/WeeklyInsight';
 import { getFocusForUser } from '@/lib/focus';
 import { STORAGE_KEYS, recordFocusDelivered } from '@/lib/storage';
 import { todayKey } from '@/lib/date';
@@ -68,6 +69,8 @@ export default function HomePage() {
       {shouldShowSharpenCard(profile, checkIns) && <SharpenFocusCard />}
 
       <StreakDisplay />
+
+      <WeeklyInsight />
 
       <ProgressInsights />
 
