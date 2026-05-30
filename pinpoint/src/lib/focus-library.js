@@ -92,6 +92,14 @@ export const focusLibrary = [
   },
   {
     belt_level: 'white',
+    area: 'guard_retention',
+    difficulty: 'beginner',
+    requires_nogi: true,
+    focus_text:
+      'In no-gi tonight, when they try to pass, frame with your forearms on their hips and biceps. No collars to grip — your frames are your defense.',
+  },
+  {
+    belt_level: 'white',
     area: 'back_defense',
     difficulty: 'beginner',
     focus_text:
@@ -103,6 +111,13 @@ export const focusLibrary = [
     difficulty: 'intermediate',
     focus_text:
       "When you feel someone going for your back, drop your weight and sit to the side they're attacking from. Just practice that reaction tonight.",
+  },
+  {
+    belt_level: 'white',
+    area: 'back_defense',
+    difficulty: 'intermediate',
+    focus_text:
+      'Tonight when you feel them setting up the rear naked choke, grab their choking arm with both hands and pull it down hard. Kill the choke first. Escape after.',
   },
   {
     belt_level: 'white',
@@ -124,6 +139,14 @@ export const focusLibrary = [
     difficulty: 'intermediate',
     focus_text:
       "If you're mounted tonight, don't bridge randomly. Wait for them to post a hand, then bridge into it. Patience is the focus tonight.",
+  },
+  {
+    belt_level: 'white',
+    area: 'surviving_pressure',
+    difficulty: 'beginner',
+    body_size_bias: 'smaller',
+    focus_text:
+      "Tonight when you feel pressure on top of you, never stop moving. Hips, shoulders, legs — always something. Pressure on a moving target is half-pressure.",
   },
   {
     belt_level: 'white',
@@ -176,6 +199,14 @@ export const focusLibrary = [
     difficulty: 'intermediate',
     focus_text:
       'Tonight focus on where your head is when passing. Head on the same side as the pass. Practice that positioning every time.',
+  },
+  {
+    belt_level: 'blue',
+    area: 'passing',
+    difficulty: 'intermediate',
+    requires_gi: true,
+    focus_text:
+      'When passing in the gi tonight, strip their grips on your collar and sleeves first. No grips for them = no defense. Grip-fight, then pass.',
   },
   {
     belt_level: 'blue',
@@ -255,6 +286,14 @@ export const focusLibrary = [
   },
   {
     belt_level: 'blue',
+    area: 'sweeps',
+    difficulty: 'intermediate',
+    body_size_bias: 'smaller',
+    focus_text:
+      "Tonight from open guard, threaten two things at once — sweep AND submission. They can stop one. They can't stop both. Pick one combo per round.",
+  },
+  {
+    belt_level: 'blue',
     area: 'pressure_control',
     difficulty: 'intermediate',
     body_size_bias: 'bigger',
@@ -267,6 +306,13 @@ export const focusLibrary = [
     difficulty: 'intermediate',
     focus_text:
       'When you have side control tonight, focus on blocking their near hip with your knee before doing anything else. Hip blocked = they can’t escape.',
+  },
+  {
+    belt_level: 'blue',
+    area: 'pressure_control',
+    difficulty: 'intermediate',
+    focus_text:
+      "Tonight in side control, when they bridge into you, don't fight the bridge — switch your hips to face their legs as they go. One reaction: feel it, switch.",
   },
 
   // ───── Purple Belt ─────
@@ -286,10 +332,24 @@ export const focusLibrary = [
   },
   {
     belt_level: 'purple',
+    area: 'transitions',
+    difficulty: 'advanced',
+    focus_text:
+      "Tonight, every time you finish a pass or a sweep, the next thing should be your attack — not a pause. Don't celebrate the position. Move while they're still adjusting.",
+  },
+  {
+    belt_level: 'purple',
     area: 'timing',
     difficulty: 'advanced',
     focus_text:
       'Tonight focus on moving when they move, not before or after. Pick one moment per roll where you perfectly matched their movement.',
+  },
+  {
+    belt_level: 'purple',
+    area: 'timing',
+    difficulty: 'advanced',
+    focus_text:
+      "Tonight when you feel them commit to a movement, attack the opposite direction. Don't fight their motion — use it. One clean example per round is enough.",
   },
   {
     belt_level: 'purple',
