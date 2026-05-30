@@ -60,6 +60,38 @@ export const focusLibrary = [
   },
   {
     belt_level: 'white',
+    area: 'guard_retention',
+    difficulty: 'beginner',
+    guard_type: 'open',
+    focus_text:
+      "Tonight when your guard opens up, focus on getting your feet on their hips. Both feet, hips, push. Don't let them close the distance.",
+  },
+  {
+    belt_level: 'white',
+    area: 'guard_retention',
+    difficulty: 'intermediate',
+    guard_type: 'open',
+    focus_text:
+      'When someone tries to pass your open guard tonight, immediately frame on their closest knee and hip-escape away. One reaction: knee frame, hip out.',
+  },
+  {
+    belt_level: 'white',
+    area: 'guard_retention',
+    difficulty: 'beginner',
+    guard_type: 'half',
+    focus_text:
+      'If you end up in half guard on the bottom tonight, focus only on getting your underhook. Underhook first. Nothing else matters until you have it.',
+  },
+  {
+    belt_level: 'white',
+    area: 'guard_retention',
+    difficulty: 'intermediate',
+    guard_type: 'half',
+    focus_text:
+      "From bottom half guard tonight, immediately turn to your side and hide your head behind their arm. Don't lie flat. One job: get to your side.",
+  },
+  {
+    belt_level: 'white',
     area: 'back_defense',
     difficulty: 'beginner',
     focus_text:
@@ -188,6 +220,38 @@ export const focusLibrary = [
     difficulty: 'intermediate',
     focus_text:
       'When you feel them posturing up in your guard, immediately go to your hip and attack the arm. Practice that reaction tonight.',
+  },
+  {
+    belt_level: 'blue',
+    area: 'sweeps',
+    difficulty: 'beginner',
+    guard_type: 'open',
+    focus_text:
+      'From open guard tonight, focus on getting one sleeve grip and one ankle grip every time they engage. Two grips before you move. That is the job.',
+  },
+  {
+    belt_level: 'blue',
+    area: 'sweeps',
+    difficulty: 'intermediate',
+    guard_type: 'open',
+    focus_text:
+      "Tonight from open guard, when they post a hand on the mat, swim under it for the arm drag. Don't wait. Practice spotting that post.",
+  },
+  {
+    belt_level: 'blue',
+    area: 'sweeps',
+    difficulty: 'beginner',
+    guard_type: 'half',
+    focus_text:
+      'From bottom half guard tonight, focus on attacking their far knee with your free foot. Hook it, pull it in. That is the setup for the sweep.',
+  },
+  {
+    belt_level: 'blue',
+    area: 'sweeps',
+    difficulty: 'intermediate',
+    guard_type: 'half',
+    focus_text:
+      "From half guard with the underhook tonight, focus on coming up to your elbow before anything else. Elbow up, then look for the sweep. Don't rush it.",
   },
   {
     belt_level: 'blue',
