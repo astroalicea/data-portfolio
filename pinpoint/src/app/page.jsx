@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
+import AuthStatus from '@/components/AuthStatus';
 import FocusCard from '@/components/FocusCard';
 import ProgressInsights from '@/components/ProgressInsights';
 import SharpenFocusCard from '@/components/SharpenFocusCard';
@@ -70,6 +71,7 @@ export default function HomePage() {
           >
             Settings
           </Link>
+          <AuthStatus />
         </div>
       </header>
 
