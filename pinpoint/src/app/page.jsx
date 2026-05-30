@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 import FocusCard from '@/components/FocusCard';
+import ProgressInsights from '@/components/ProgressInsights';
 import SharpenFocusCard from '@/components/SharpenFocusCard';
 import StreakDisplay from '@/components/StreakDisplay';
 import { getFocusForUser } from '@/lib/focus';
@@ -67,6 +68,8 @@ export default function HomePage() {
       {shouldShowSharpenCard(profile, checkIns) && <SharpenFocusCard />}
 
       <StreakDisplay />
+
+      <ProgressInsights />
 
       <div className="mt-auto flex flex-col gap-3 pt-6">
         <Link
