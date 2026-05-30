@@ -82,8 +82,10 @@ extra questions:
 - Body size vs typical partners (smaller / similar / bigger)
 
 Still tap-only. "Maybe later" snoozes the prompt for 7 days; completing it
-hides the card permanently. V1 collects the data only — wiring it into focus
-selection is a follow-up once we see the response rate.
+hides the card permanently. Answers softly bias focus selection: gi/no-gi
+acts as a hard filter on tagged entries, while top guard and body size add
+preference points within the existing candidate pool. Users who skip the
+prompt see no change in behavior.
 
 ---
 

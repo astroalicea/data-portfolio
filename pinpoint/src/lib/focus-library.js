@@ -134,6 +134,7 @@ export const focusLibrary = [
     belt_level: 'blue',
     area: 'passing',
     difficulty: 'intermediate',
+    body_size_bias: 'bigger',
     focus_text:
       'When passing tonight, keep your hips low and connected. The moment your hips rise, the pass fails. One cue: stay heavy.',
   },
@@ -169,6 +170,7 @@ export const focusLibrary = [
     belt_level: 'blue',
     area: 'submissions',
     difficulty: 'intermediate',
+    guard_type: 'closed',
     focus_text:
       'When you have someone in guard, practice setting up the armbar position without finishing. Hip angle, arm control, leg position. Just get there tonight.',
   },
@@ -176,6 +178,7 @@ export const focusLibrary = [
     belt_level: 'blue',
     area: 'sweeps',
     difficulty: 'beginner',
+    guard_type: 'closed',
     focus_text:
       'Tonight from guard, focus on breaking their posture first before anything else. No broken posture, no sweep. One job: get their head down.',
   },
@@ -190,6 +193,7 @@ export const focusLibrary = [
     belt_level: 'blue',
     area: 'pressure_control',
     difficulty: 'intermediate',
+    body_size_bias: 'bigger',
     focus_text:
       'Tonight in top positions, focus on keeping your weight on them at all times. When you move, one point stays heavy. Practice that.',
   },
