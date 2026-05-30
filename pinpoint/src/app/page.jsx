@@ -59,9 +59,18 @@ export default function HomePage() {
         <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
           PinPoint
         </h1>
-        <span className="text-xs uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-          {beltLabel(profile.belt_level)} belt
-        </span>
+        <div className="flex items-center gap-2 text-xs uppercase tracking-wider">
+          <span className="text-zinc-500 dark:text-zinc-400">
+            {beltLabel(profile.belt_level)} belt
+          </span>
+          <span className="text-zinc-300 dark:text-zinc-700">·</span>
+          <Link
+            href="/settings"
+            className="text-zinc-700 transition hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-50"
+          >
+            Settings
+          </Link>
+        </div>
       </header>
 
       <FocusCard focus={focus} />
