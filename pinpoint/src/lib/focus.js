@@ -36,6 +36,47 @@ function filterByLevelAndArea(beltLevel, area, difficulty) {
   });
 }
 
+// Hard compatibility: only filters when the entry explicitly demands gi or
+// no-gi AND the user has answered. Untagged entries are universally compatible.
+function compatibleWithProfile(focus, profile) {
+  if (!profile) return true;
+  if (focus.requires_gi && profile.gi_or_nogi === 'nogi') return false;
+  if (focus.requires_nogi && profile.gi_or_nogi === 'gi') return false;
+  return true;
+}
+
+// Soft preference. Entries without these tags score 0, so users who haven't
+// completed the extended onboarding see the same behavior as before.
+function softScore(focus, profile) {
+  if (!profile) return 0;
+  let score = 0;
+  if (
+    focus.guard_type &&
+    profile.top_guard &&
+    profile.top_guard !== 'no_preference' &&
+    focus.guard_type === profile.top_guard
+  ) {
+    score += 2;
+  }
+  if (focus.body_size_bias && profile.body_size && focus.body_size_bias === profile.body_size) {
+    score += 2;
+  }
+  return score;
+}
+
+// Filter candidates by hard constraints, then pick deterministically from the
+// highest-scoring tier using the seed. Falls back to the unfiltered list if
+// the gi filter empties the pool — preferring an off-tag focus over nothing.
+function pickForProfile(candidates, profile, seed) {
+  if (!candidates.length) return null;
+  let pool = candidates.filter((f) => compatibleWithProfile(f, profile));
+  if (!pool.length) pool = candidates;
+  const scored = pool.map((f) => ({ focus: f, score: softScore(f, profile) }));
+  const top = scored.reduce((max, s) => (s.score > max ? s.score : max), 0);
+  const best = scored.filter((s) => s.score === top).map((s) => s.focus);
+  return pickOne(best, seed);
+}
+
 function identifyProblemArea(recentCheckIns) {
   const positions = recentCheckIns
     .filter((c) => c.got_tapped && c.position_lost)
@@ -67,29 +108,30 @@ function dominantFeeling(recentCheckIns) {
   return top[0];
 }
 
-function getColdStartFocus(beltLevel, monthsTraining, seed) {
+function getColdStartFocus(profile, seed) {
+  const beltLevel = profile.belt_level;
   const buckets = COLD_START_AREAS[beltLevel] || COLD_START_AREAS.white;
-  const pool = monthsTraining < 6 ? buckets.early : [...buckets.early, ...buckets.later];
+  const pool = profile.months_training < 6 ? buckets.early : [...buckets.early, ...buckets.later];
   const area = pickOne(pool, seed);
   const candidates = filterByLevelAndArea(beltLevel, area, 'beginner');
-  if (candidates.length) return pickOne(candidates, seed);
-  return pickOne(filterByLevelAndArea(beltLevel, area), seed);
+  if (candidates.length) return pickForProfile(candidates, profile, seed);
+  return pickForProfile(filterByLevelAndArea(beltLevel, area), profile, seed);
 }
 
-function getSimplerFocus(beltLevel, area, seed) {
+function getSimplerFocus(profile, area, seed) {
+  const beltLevel = profile.belt_level;
   const candidates = filterByLevelAndArea(beltLevel, area, 'beginner');
-  if (candidates.length) return pickOne(candidates, seed);
-  return pickOne(filterByLevelAndArea(beltLevel, area), seed);
+  if (candidates.length) return pickForProfile(candidates, profile, seed);
+  return pickForProfile(filterByLevelAndArea(beltLevel, area), profile, seed);
 }
 
-function getTargetedFocus(beltLevel, area, difficulty, seed) {
+function getTargetedFocus(profile, area, difficulty, seed) {
+  const beltLevel = profile.belt_level;
   const matches = filterByLevelAndArea(beltLevel, area, difficulty);
-  if (matches.length) return pickOne(matches, seed);
-  // Fall back to any difficulty in this area at this belt level.
+  if (matches.length) return pickForProfile(matches, profile, seed);
   const anyDifficulty = filterByLevelAndArea(beltLevel, area);
-  if (anyDifficulty.length) return pickOne(anyDifficulty, seed);
-  // Last resort: cold start.
-  return getColdStartFocus(beltLevel, 12, seed);
+  if (anyDifficulty.length) return pickForProfile(anyDifficulty, profile, seed);
+  return getColdStartFocus(profile, seed);
 }
 
 /**
@@ -102,7 +144,7 @@ export function getFocusForUser(profile, recentCheckIns = [], seed = Date.now())
   const window = recentCheckIns.slice(0, 10);
 
   if (!window.length) {
-    return getColdStartFocus(profile.belt_level, profile.months_training, seed);
+    return getColdStartFocus(profile, seed);
   }
 
   const problemArea = identifyProblemArea(window);
@@ -111,7 +153,7 @@ export function getFocusForUser(profile, recentCheckIns = [], seed = Date.now())
 
   if (attemptRate < 0.5) {
     return getSimplerFocus(
-      profile.belt_level,
+      profile,
       problemArea || COLD_START_AREAS[profile.belt_level]?.early[0],
       seed,
     );
@@ -119,7 +161,7 @@ export function getFocusForUser(profile, recentCheckIns = [], seed = Date.now())
 
   const difficultyBias = FEELING_TO_DIFFICULTY_BIAS[feeling];
   const area = problemArea || pickOne(COLD_START_AREAS[profile.belt_level]?.early || [], seed);
-  return getTargetedFocus(profile.belt_level, area, difficultyBias, seed);
+  return getTargetedFocus(profile, area, difficultyBias, seed);
 }
 
 export const _internal = {
@@ -129,4 +171,7 @@ export const _internal = {
   getColdStartFocus,
   getSimplerFocus,
   getTargetedFocus,
+  compatibleWithProfile,
+  softScore,
+  pickForProfile,
 };

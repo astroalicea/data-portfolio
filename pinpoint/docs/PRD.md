@@ -73,6 +73,20 @@ A pre-roll focus delivery system with a post-roll feedback loop.
 - Focus attempt rate (are they trying it?)
 - One insight surfaced per week
 
+### 5. Progressive Profiling
+After a user has completed 3+ check-ins (they're engaged but not overwhelmed),
+the home screen surfaces an optional "Sharpen your focus" card with three
+extra questions:
+- Gi or no-gi (or both)
+- Most-trained guard (open / closed / half / no preference)
+- Body size vs typical partners (smaller / similar / bigger)
+
+Still tap-only. "Maybe later" snoozes the prompt for 7 days; completing it
+hides the card permanently. Answers softly bias focus selection: gi/no-gi
+acts as a hard filter on tagged entries, while top guard and body size add
+preference points within the existing candidate pool. Users who skip the
+prompt see no change in behavior.
+
 ---
 
 ## Core Features — V2 (future)

@@ -3,25 +3,24 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
+import AuthStatus from '@/components/AuthStatus';
 import FocusCard from '@/components/FocusCard';
+import ProgressInsights from '@/components/ProgressInsights';
+import SharpenFocusCard from '@/components/SharpenFocusCard';
 import StreakDisplay from '@/components/StreakDisplay';
+import WeeklyInsight from '@/components/WeeklyInsight';
 import { getFocusForUser } from '@/lib/focus';
-import {
-  getCheckIns,
-  getFocusHistory,
-  getProfile,
-  recordFocusDelivered,
-} from '@/lib/storage';
+import { STORAGE_KEYS, recordFocusDelivered } from '@/lib/storage';
 import { todayKey } from '@/lib/date';
-import { useStoredValue } from '@/lib/use-stored';
+import { useStoredJSON } from '@/lib/use-stored';
 
-const EMPTY = [];
+const EMPTY_LIST = [];
 
 export default function HomePage() {
   const router = useRouter();
-  const profile = useStoredValue(getProfile, null);
-  const checkIns = useStoredValue(getCheckIns, EMPTY);
-  const history = useStoredValue(getFocusHistory, EMPTY);
+  const profile = useStoredJSON(STORAGE_KEYS.profile, null);
+  const checkIns = useStoredJSON(STORAGE_KEYS.checkIns, EMPTY_LIST);
+  const history = useStoredJSON(STORAGE_KEYS.focusHistory, EMPTY_LIST);
 
   const focus = useMemo(() => {
     if (!profile) return null;
@@ -38,7 +37,6 @@ export default function HomePage() {
     return getFocusForUser(profile, checkIns, seed);
   }, [profile, checkIns, history]);
 
-  // Side effects: redirect if no profile, and persist today's focus once.
   useEffect(() => {
     if (profile === null) {
       router.replace('/onboarding');
@@ -62,14 +60,30 @@ export default function HomePage() {
         <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
           PinPoint
         </h1>
-        <span className="text-xs uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-          {beltLabel(profile.belt_level)} belt
-        </span>
+        <div className="flex items-center gap-2 text-xs uppercase tracking-wider">
+          <span className="text-zinc-500 dark:text-zinc-400">
+            {beltLabel(profile.belt_level)} belt
+          </span>
+          <span className="text-zinc-300 dark:text-zinc-700">·</span>
+          <Link
+            href="/settings"
+            className="text-zinc-700 transition hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-50"
+          >
+            Settings
+          </Link>
+          <AuthStatus />
+        </div>
       </header>
 
       <FocusCard focus={focus} />
 
+      {shouldShowSharpenCard(profile, checkIns) && <SharpenFocusCard />}
+
       <StreakDisplay />
+
+      <WeeklyInsight />
+
+      <ProgressInsights />
 
       <div className="mt-auto flex flex-col gap-3 pt-6">
         <Link
@@ -103,6 +117,19 @@ function beltLabel(belt) {
 function sameLocalDay(iso, key) {
   const d = new Date(iso);
   return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}` === key;
+}
+
+function shouldShowSharpenCard(profile, checkIns) {
+  if (!profile) return false;
+  if (checkIns.length < 3) return false;
+  if (profile.extended_at) return false;
+  if (
+    profile.extended_dismissed_until &&
+    new Date(profile.extended_dismissed_until) > new Date()
+  ) {
+    return false;
+  }
+  return true;
 }
 
 function hashKey(str) {

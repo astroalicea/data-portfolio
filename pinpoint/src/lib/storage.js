@@ -1,68 +1,74 @@
 // Tiny localStorage wrapper. Used by the MVP before Supabase is wired up.
-// All reads are SSR-safe (return defaults on the server) and stable across
-// re-renders (cached by raw string) so they're safe to pass to
-// `useSyncExternalStore`.
+// The hook layer (`use-stored.js`) reads raw strings via `readRaw` so that
+// `useSyncExternalStore` always compares primitives, never object identity.
 
-const KEYS = {
+export const STORAGE_KEYS = {
   profile: 'pinpoint:profile',
   checkIns: 'pinpoint:check_ins',
   focusHistory: 'pinpoint:focus_history',
 };
 
-// Stable empty references — `useSyncExternalStore` compares snapshots by
-// identity, so returning a fresh `[]` each call would loop forever.
-const EMPTY_ARRAY = Object.freeze([]);
-
-// Cache parsed JSON keyed by raw string. As long as the underlying string
-// hasn't changed, callers get the same object reference back.
-const parseCache = new Map();
-
 function isBrowser() {
   return typeof window !== 'undefined';
 }
 
-function readJSON(key, emptyValue) {
-  if (!isBrowser()) return emptyValue;
-  let raw;
+// Raw read — returns the JSON string from localStorage (or null). Safe to
+// hand to `useSyncExternalStore` because strings compare by value.
+export function readRaw(key) {
+  if (!isBrowser()) return null;
   try {
-    raw = window.localStorage.getItem(key);
+    return window.localStorage.getItem(key);
   } catch {
-    return emptyValue;
-  }
-  if (raw == null) return emptyValue;
-  const cached = parseCache.get(key);
-  if (cached && cached.raw === raw) return cached.parsed;
-  try {
-    const parsed = JSON.parse(raw);
-    parseCache.set(key, { raw, parsed });
-    return parsed;
-  } catch {
-    return emptyValue;
+    return null;
   }
 }
 
 function writeJSON(key, value) {
   if (!isBrowser()) return;
   try {
-    const raw = JSON.stringify(value);
-    window.localStorage.setItem(key, raw);
-    parseCache.set(key, { raw, parsed: value });
+    window.localStorage.setItem(key, JSON.stringify(value));
   } catch {
     // Quota or private-mode failure — fail silent for the MVP.
   }
 }
 
+function readJSON(key, fallback) {
+  const raw = readRaw(key);
+  if (raw == null) return fallback;
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return fallback;
+  }
+}
+
+// Imperative reads — used by event handlers (e.g. `addCheckIn` reads the
+// existing list before writing). React subscribers should use the hook.
+
 export function getProfile() {
-  return readJSON(KEYS.profile, null);
+  return readJSON(STORAGE_KEYS.profile, null);
 }
 
 export function saveProfile(profile) {
-  writeJSON(KEYS.profile, profile);
+  writeJSON(STORAGE_KEYS.profile, profile);
   return profile;
 }
 
+export function updateProfile(patch) {
+  const current = getProfile();
+  if (!current) return null;
+  const next = { ...current, ...patch };
+  writeJSON(STORAGE_KEYS.profile, next);
+  return next;
+}
+
+export function snoozeExtendedProfile(days = 7) {
+  const until = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString();
+  return updateProfile({ extended_dismissed_until: until });
+}
+
 export function getCheckIns() {
-  return readJSON(KEYS.checkIns, EMPTY_ARRAY);
+  return readJSON(STORAGE_KEYS.checkIns, []);
 }
 
 export function addCheckIn(checkIn) {
@@ -72,12 +78,12 @@ export function addCheckIn(checkIn) {
     id: crypto.randomUUID(),
     created_at: new Date().toISOString(),
   };
-  writeJSON(KEYS.checkIns, [entry, ...all]);
+  writeJSON(STORAGE_KEYS.checkIns, [entry, ...all]);
   return entry;
 }
 
 export function getFocusHistory() {
-  return readJSON(KEYS.focusHistory, EMPTY_ARRAY);
+  return readJSON(STORAGE_KEYS.focusHistory, []);
 }
 
 export function recordFocusDelivered(focus) {
@@ -89,14 +95,11 @@ export function recordFocusDelivered(focus) {
     belt_level: focus.belt_level,
     delivered_at: new Date().toISOString(),
   };
-  writeJSON(KEYS.focusHistory, [entry, ...history]);
+  writeJSON(STORAGE_KEYS.focusHistory, [entry, ...history]);
   return entry;
 }
 
 export function resetAll() {
   if (!isBrowser()) return;
-  Object.values(KEYS).forEach((k) => {
-    window.localStorage.removeItem(k);
-    parseCache.delete(k);
-  });
+  Object.values(STORAGE_KEYS).forEach((k) => window.localStorage.removeItem(k));
 }

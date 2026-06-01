@@ -4,12 +4,12 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import CheckInForm from '@/components/CheckInForm';
-import { addCheckIn, getProfile } from '@/lib/storage';
-import { useStoredValue } from '@/lib/use-stored';
+import { STORAGE_KEYS, addCheckIn } from '@/lib/storage';
+import { useStoredJSON } from '@/lib/use-stored';
 
 export default function CheckInPage() {
   const router = useRouter();
-  const profile = useStoredValue(getProfile, null);
+  const profile = useStoredJSON(STORAGE_KEYS.profile, null);
   const [done, setDone] = useState(false);
 
   useEffect(() => {
