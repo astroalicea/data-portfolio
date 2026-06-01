@@ -35,12 +35,18 @@ export const POSITION_TO_AREA = {
   standing: 'guard_retention',
 };
 
+// Each entry now carries a skill_id binding it to a node in the skill
+// graph (see ./skills.js). Entries with skill_id: null are intentionally
+// orphan — typically advanced blue/purple content that hasn't been
+// modeled as a skill atom yet. The engine treats orphan entries as
+// fallback content with no mastery tracking.
 export const focusLibrary = [
   // ───── White Belt ─────
   {
     belt_level: 'white',
     area: 'guard_retention',
     difficulty: 'beginner',
+    skill_id: 'open_guard_hip_connection',
     focus_text:
       "Tonight when someone tries to pass your guard, focus only on keeping your knees between you and them. Don't worry about sweeping. Just survive.",
   },
@@ -48,6 +54,7 @@ export const focusLibrary = [
     belt_level: 'white',
     area: 'guard_retention',
     difficulty: 'beginner',
+    skill_id: 'open_guard_hip_connection',
     focus_text:
       "When you feel your guard opening, immediately bring your knees to your chest. One thing tonight: knees in, don't let them flatten you out.",
   },
@@ -55,6 +62,7 @@ export const focusLibrary = [
     belt_level: 'white',
     area: 'guard_retention',
     difficulty: 'intermediate',
+    skill_id: 'closed_guard_against_standing',
     focus_text:
       'If someone is standing in your guard, grab their sleeves or wrists. Control their hands before they can pass. Just that tonight.',
   },
@@ -63,6 +71,7 @@ export const focusLibrary = [
     area: 'guard_retention',
     difficulty: 'beginner',
     guard_type: 'open',
+    skill_id: 'open_guard_hip_connection',
     focus_text:
       "Tonight when your guard opens up, focus on getting your feet on their hips. Both feet, hips, push. Don't let them close the distance.",
   },
@@ -71,6 +80,7 @@ export const focusLibrary = [
     area: 'guard_retention',
     difficulty: 'intermediate',
     guard_type: 'open',
+    skill_id: 'open_guard_frame_on_pass',
     focus_text:
       'When someone tries to pass your open guard tonight, immediately frame on their closest knee and hip-escape away. One reaction: knee frame, hip out.',
   },
@@ -79,6 +89,7 @@ export const focusLibrary = [
     area: 'guard_retention',
     difficulty: 'beginner',
     guard_type: 'half',
+    skill_id: 'half_guard_underhook_priority',
     focus_text:
       'If you end up in half guard on the bottom tonight, focus only on getting your underhook. Underhook first. Nothing else matters until you have it.',
   },
@@ -87,6 +98,7 @@ export const focusLibrary = [
     area: 'guard_retention',
     difficulty: 'intermediate',
     guard_type: 'half',
+    skill_id: 'half_guard_turn_to_side',
     focus_text:
       "From bottom half guard tonight, immediately turn to your side and hide your head behind their arm. Don't lie flat. One job: get to your side.",
   },
@@ -95,6 +107,7 @@ export const focusLibrary = [
     area: 'guard_retention',
     difficulty: 'beginner',
     requires_nogi: true,
+    skill_id: 'open_guard_frame_on_pass',
     focus_text:
       'In no-gi tonight, when they try to pass, frame with your forearms on their hips and biceps. No collars to grip — your frames are your defense.',
   },
@@ -102,6 +115,7 @@ export const focusLibrary = [
     belt_level: 'white',
     area: 'back_defense',
     difficulty: 'beginner',
+    skill_id: 'back_protect_neck_chin_tuck',
     focus_text:
       'If someone takes your back tonight, tuck your chin immediately. One job: protect your neck. Everything else is secondary.',
   },
@@ -109,6 +123,7 @@ export const focusLibrary = [
     belt_level: 'white',
     area: 'back_defense',
     difficulty: 'intermediate',
+    skill_id: 'back_protect_neck_chin_tuck',
     focus_text:
       "When you feel someone going for your back, drop your weight and sit to the side they're attacking from. Just practice that reaction tonight.",
   },
@@ -116,6 +131,7 @@ export const focusLibrary = [
     belt_level: 'white',
     area: 'back_defense',
     difficulty: 'intermediate',
+    skill_id: 'back_kill_choking_arm',
     focus_text:
       'Tonight when you feel them setting up the rear naked choke, grab their choking arm with both hands and pull it down hard. Kill the choke first. Escape after.',
   },
@@ -123,6 +139,7 @@ export const focusLibrary = [
     belt_level: 'white',
     area: 'surviving_pressure',
     difficulty: 'beginner',
+    skill_id: 'bottom_keep_elbows_tight',
     focus_text:
       "Tonight when you're on the bottom, focus on keeping your elbows tight to your body. Elbows out = submissions. Elbows in = survive.",
   },
@@ -130,6 +147,7 @@ export const focusLibrary = [
     belt_level: 'white',
     area: 'surviving_pressure',
     difficulty: 'beginner',
+    skill_id: 'side_control_recover_to_knees',
     focus_text:
       "When someone is in side control, don't just push — turn into them and get to your side. Tonight practice that one reaction.",
   },
@@ -137,6 +155,7 @@ export const focusLibrary = [
     belt_level: 'white',
     area: 'surviving_pressure',
     difficulty: 'intermediate',
+    skill_id: 'mount_trap_arm_for_bridge',
     focus_text:
       "If you're mounted tonight, don't bridge randomly. Wait for them to post a hand, then bridge into it. Patience is the focus tonight.",
   },
@@ -145,6 +164,7 @@ export const focusLibrary = [
     area: 'surviving_pressure',
     difficulty: 'beginner',
     body_size_bias: 'smaller',
+    skill_id: 'bottom_never_stop_moving',
     focus_text:
       "Tonight when you feel pressure on top of you, never stop moving. Hips, shoulders, legs — always something. Pressure on a moving target is half-pressure.",
   },
@@ -152,6 +172,7 @@ export const focusLibrary = [
     belt_level: 'white',
     area: 'mount_escape',
     difficulty: 'beginner',
+    skill_id: 'mount_elbow_to_mat',
     focus_text:
       "Tonight in mount, focus only on getting your elbow to the mat and turning to your side. Don't try to escape fully yet. Just get to your side.",
   },
@@ -159,6 +180,7 @@ export const focusLibrary = [
     belt_level: 'white',
     area: 'mount_escape',
     difficulty: 'intermediate',
+    skill_id: 'mount_trap_arm_for_bridge',
     focus_text:
       'When someone mounts you, immediately trap one of their arms by hugging it tight. One focus: trap the arm before anything else.',
   },
@@ -166,6 +188,7 @@ export const focusLibrary = [
     belt_level: 'white',
     area: 'side_control_escape',
     difficulty: 'beginner',
+    skill_id: 'side_control_frame_to_hip',
     focus_text:
       'From side control tonight, focus on getting your inside elbow to their hip. That frame is your first step to everything. Just that.',
   },
@@ -173,6 +196,7 @@ export const focusLibrary = [
     belt_level: 'white',
     area: 'side_control_escape',
     difficulty: 'intermediate',
+    skill_id: 'side_control_frame_to_hip',
     focus_text:
       "Tonight when you're in side control, don't push with straight arms. Bend them and frame on their neck and hip. Practice that one thing.",
   },
@@ -182,6 +206,7 @@ export const focusLibrary = [
     belt_level: 'blue',
     area: 'passing',
     difficulty: 'beginner',
+    skill_id: 'passing_control_one_knee',
     focus_text:
       "Tonight when you're trying to pass guard, focus on controlling one knee. Pin it to the mat before you move. Don't rush the pass.",
   },
@@ -190,6 +215,7 @@ export const focusLibrary = [
     area: 'passing',
     difficulty: 'intermediate',
     body_size_bias: 'bigger',
+    skill_id: 'passing_stay_heavy',
     focus_text:
       'When passing tonight, keep your hips low and connected. The moment your hips rise, the pass fails. One cue: stay heavy.',
   },
@@ -197,6 +223,7 @@ export const focusLibrary = [
     belt_level: 'blue',
     area: 'passing',
     difficulty: 'intermediate',
+    skill_id: 'passing_head_position',
     focus_text:
       'Tonight focus on where your head is when passing. Head on the same side as the pass. Practice that positioning every time.',
   },
@@ -205,6 +232,7 @@ export const focusLibrary = [
     area: 'passing',
     difficulty: 'intermediate',
     requires_gi: true,
+    skill_id: 'passing_gi_grip_strip',
     focus_text:
       'When passing in the gi tonight, strip their grips on your collar and sleeves first. No grips for them = no defense. Grip-fight, then pass.',
   },
@@ -212,6 +240,7 @@ export const focusLibrary = [
     belt_level: 'blue',
     area: 'back_attacks',
     difficulty: 'beginner',
+    skill_id: 'back_seatbelt_grip',
     focus_text:
       'If you take the back tonight, focus on getting the seatbelt grip before anything else. No seatbelt, no back attack. Just that.',
   },
@@ -219,6 +248,7 @@ export const focusLibrary = [
     belt_level: 'blue',
     area: 'back_attacks',
     difficulty: 'intermediate',
+    skill_id: 'back_choke_arm_placement',
     focus_text:
       'Tonight from the back, practice switching your choking arm to under the chin before squeezing. Placement before pressure.',
   },
@@ -226,6 +256,7 @@ export const focusLibrary = [
     belt_level: 'blue',
     area: 'submissions',
     difficulty: 'intermediate',
+    skill_id: 'side_control_kimura_recognize',
     focus_text:
       'Tonight from side control, look for the near arm every time. Is it available for a kimura? Practice seeing it, not finishing it.',
   },
@@ -234,6 +265,7 @@ export const focusLibrary = [
     area: 'submissions',
     difficulty: 'intermediate',
     guard_type: 'closed',
+    skill_id: 'closed_guard_basic_armbar_setup',
     focus_text:
       'When you have someone in guard, practice setting up the armbar position without finishing. Hip angle, arm control, leg position. Just get there tonight.',
   },
@@ -242,6 +274,7 @@ export const focusLibrary = [
     area: 'sweeps',
     difficulty: 'beginner',
     guard_type: 'closed',
+    skill_id: 'sweep_break_posture_first',
     focus_text:
       'Tonight from guard, focus on breaking their posture first before anything else. No broken posture, no sweep. One job: get their head down.',
   },
@@ -249,6 +282,7 @@ export const focusLibrary = [
     belt_level: 'blue',
     area: 'sweeps',
     difficulty: 'intermediate',
+    skill_id: 'sweep_attack_arm_when_postured',
     focus_text:
       'When you feel them posturing up in your guard, immediately go to your hip and attack the arm. Practice that reaction tonight.',
   },
@@ -257,6 +291,7 @@ export const focusLibrary = [
     area: 'sweeps',
     difficulty: 'beginner',
     guard_type: 'open',
+    skill_id: 'open_guard_sleeve_ankle_control',
     focus_text:
       'From open guard tonight, focus on getting one sleeve grip and one ankle grip every time they engage. Two grips before you move. That is the job.',
   },
@@ -265,6 +300,7 @@ export const focusLibrary = [
     area: 'sweeps',
     difficulty: 'intermediate',
     guard_type: 'open',
+    skill_id: null,
     focus_text:
       "Tonight from open guard, when they post a hand on the mat, swim under it for the arm drag. Don't wait. Practice spotting that post.",
   },
@@ -273,6 +309,7 @@ export const focusLibrary = [
     area: 'sweeps',
     difficulty: 'beginner',
     guard_type: 'half',
+    skill_id: 'half_guard_far_knee_hook',
     focus_text:
       'From bottom half guard tonight, focus on attacking their far knee with your free foot. Hook it, pull it in. That is the setup for the sweep.',
   },
@@ -281,6 +318,7 @@ export const focusLibrary = [
     area: 'sweeps',
     difficulty: 'intermediate',
     guard_type: 'half',
+    skill_id: 'half_guard_elbow_up_before_sweep',
     focus_text:
       "From half guard with the underhook tonight, focus on coming up to your elbow before anything else. Elbow up, then look for the sweep. Don't rush it.",
   },
@@ -289,6 +327,7 @@ export const focusLibrary = [
     area: 'sweeps',
     difficulty: 'intermediate',
     body_size_bias: 'smaller',
+    skill_id: null,
     focus_text:
       "Tonight from open guard, threaten two things at once — sweep AND submission. They can stop one. They can't stop both. Pick one combo per round.",
   },
@@ -297,6 +336,7 @@ export const focusLibrary = [
     area: 'pressure_control',
     difficulty: 'intermediate',
     body_size_bias: 'bigger',
+    skill_id: 'side_control_keep_weight_distributed',
     focus_text:
       'Tonight in top positions, focus on keeping your weight on them at all times. When you move, one point stays heavy. Practice that.',
   },
@@ -304,6 +344,7 @@ export const focusLibrary = [
     belt_level: 'blue',
     area: 'pressure_control',
     difficulty: 'intermediate',
+    skill_id: 'side_control_block_near_hip',
     focus_text:
       'When you have side control tonight, focus on blocking their near hip with your knee before doing anything else. Hip blocked = they can’t escape.',
   },
@@ -311,6 +352,7 @@ export const focusLibrary = [
     belt_level: 'blue',
     area: 'pressure_control',
     difficulty: 'intermediate',
+    skill_id: null,
     focus_text:
       "Tonight in side control, when they bridge into you, don't fight the bridge — switch your hips to face their legs as they go. One reaction: feel it, switch.",
   },
@@ -320,6 +362,7 @@ export const focusLibrary = [
     belt_level: 'purple',
     area: 'transitions',
     difficulty: 'advanced',
+    skill_id: null,
     focus_text:
       'Tonight focus on what happens between positions. The transition from side control to mount — practice that one transition every time it’s available.',
   },
@@ -327,6 +370,7 @@ export const focusLibrary = [
     belt_level: 'purple',
     area: 'transitions',
     difficulty: 'advanced',
+    skill_id: null,
     focus_text:
       'When a submission fails tonight, immediately look for the next position or submission. Chain two things together. Just two.',
   },
@@ -334,6 +378,7 @@ export const focusLibrary = [
     belt_level: 'purple',
     area: 'transitions',
     difficulty: 'advanced',
+    skill_id: null,
     focus_text:
       "Tonight, every time you finish a pass or a sweep, the next thing should be your attack — not a pause. Don't celebrate the position. Move while they're still adjusting.",
   },
@@ -341,6 +386,7 @@ export const focusLibrary = [
     belt_level: 'purple',
     area: 'timing',
     difficulty: 'advanced',
+    skill_id: null,
     focus_text:
       'Tonight focus on moving when they move, not before or after. Pick one moment per roll where you perfectly matched their movement.',
   },
@@ -348,6 +394,7 @@ export const focusLibrary = [
     belt_level: 'purple',
     area: 'timing',
     difficulty: 'advanced',
+    skill_id: null,
     focus_text:
       "Tonight when you feel them commit to a movement, attack the opposite direction. Don't fight their motion — use it. One clean example per round is enough.",
   },
@@ -355,6 +402,7 @@ export const focusLibrary = [
     belt_level: 'purple',
     area: 'weak_side',
     difficulty: 'advanced',
+    skill_id: null,
     focus_text:
       "Tonight do everything from your weak side. If you're right-handed, attack left. It will be uncomfortable. That's the point.",
   },
