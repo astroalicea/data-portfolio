@@ -3,11 +3,13 @@
 import { useCallback, useMemo, useSyncExternalStore } from 'react';
 import { readRaw } from './storage';
 
-// We don't subscribe to cross-tab `storage` events for the MVP — all writes
-// go through our own helpers in this tab, so a fresh mount after a navigation
-// re-reads the latest value.
-function noopSubscribe() {
-  return () => {};
+// Subscribe to in-tab writes via the custom event dispatched by storage.js
+// after every write (local or post-sync). This is what makes a click that
+// updates localStorage cause the rendered tree to re-derive its state.
+function subscribe(onStoreChange) {
+  if (typeof window === 'undefined') return () => {};
+  window.addEventListener('pinpoint:storage', onStoreChange);
+  return () => window.removeEventListener('pinpoint:storage', onStoreChange);
 }
 
 /**
@@ -21,7 +23,7 @@ function noopSubscribe() {
  */
 export function useStoredJSON(key, fallback) {
   const getSnapshot = useCallback(() => readRaw(key), [key]);
-  const raw = useSyncExternalStore(noopSubscribe, getSnapshot, () => null);
+  const raw = useSyncExternalStore(subscribe, getSnapshot, () => null);
 
   return useMemo(() => {
     if (raw == null) return fallback;

@@ -1,8 +1,9 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { saveProfile } from '@/lib/storage';
+import { useEffect, useState } from 'react';
+import { getProfile, saveProfile, syncFromSupabase } from '@/lib/storage';
+import { getSupabase, isSupabaseConfigured } from '@/lib/supabase';
 
 const STEPS = [
   {
@@ -48,6 +49,26 @@ export default function OnboardingPage() {
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState({});
+
+  // If a signed-in user lands here without local data (new device), pull
+  // their profile from Supabase first. If they already have one remotely,
+  // skip the wizard and route home so we don't overwrite their answers.
+  useEffect(() => {
+    if (!isSupabaseConfigured()) return;
+    const sb = getSupabase();
+    if (!sb) return;
+    let cancelled = false;
+    sb.auth.getSession().then(({ data }) => {
+      if (!data.session || cancelled) return;
+      syncFromSupabase().then(() => {
+        if (cancelled) return;
+        if (getProfile()) router.replace('/');
+      });
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [router]);
 
   function handleAnswer(option) {
     const current = STEPS[step];
