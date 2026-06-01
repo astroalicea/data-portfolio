@@ -1,4 +1,5 @@
 import { Geist, Geist_Mono } from 'next/font/google';
+import SupabaseSync from '@/components/SupabaseSync';
 import './globals.css';
 
 const geistSans = Geist({
@@ -30,6 +31,7 @@ export default function RootLayout({ children }) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <SupabaseSync />
         <div className="mx-auto flex w-full max-w-md flex-1 flex-col px-5 py-6 sm:py-10">
           {children}
         </div>

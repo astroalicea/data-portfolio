@@ -73,9 +73,14 @@ Vercel only picks up new env vars on a fresh build.
 4. Open the email → tap the link → it bounces you back to PinPoint
    signed in. Your email shows in the header.
 
-That's it for setup. Data is still on localStorage in this commit —
-the data-layer cutover ships separately so we can verify auth works in
-isolation before changing where check-ins live.
+That's it for setup. Once you're signed in:
+
+- Your profile, check-ins, and focus history are pushed to Supabase
+  in the background.
+- Open the app on a second device, sign in with the same email, and
+  your data appears.
+- localStorage still acts as a fast local cache that mirrors Supabase
+  — reads stay instant, writes update both stores.
 
 ## Troubleshooting
 
